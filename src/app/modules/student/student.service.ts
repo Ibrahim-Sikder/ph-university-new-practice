@@ -10,7 +10,6 @@ import { studentSearchAbleFields } from './student.constant';
 const getAllStudentFromDB = async (query: Record<string, unknown>) => {
   // const queryObj = { ...query };
 
-
   // let searchTerm = '';
   // if (queryObj?.searchTerm) {
   //   searchTerm = queryObj?.searchTerm as string;
@@ -58,26 +57,35 @@ const getAllStudentFromDB = async (query: Record<string, unknown>) => {
   // const limitQuery =  sortQuery.limit(limit);
   // const paginateQuery =  limitQuery.skip(skip);
 
-
-  // // fildquery 
+  // // fildquery
   // let fields = '-__v'
   // if(query.fields){
   //   fields = (query.fields as string).split(',').join(' ')
   // }
 
-
- 
-
   // const fieldsQuery  = await paginateQuery.select(fields)
 
   // return fieldsQuery;
 
-  const studentQuery = new QueryBuilder(Student.find(), query).search(studentSearchAbleFields).filter().sort().paginate().fields()
+  const studentQuery = new QueryBuilder(
+    Student.find()
+      .populate('admissionSemester')
+      .populate({
+        path: 'academicDepartment',
+        populate: {
+          path: 'academicFaculty',
+        },
+      }),
+    query,
+  )
+    .search(studentSearchAbleFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
 
-  const result = await studentQuery.modelQuery
+  const result = await studentQuery.modelQuery;
   return result;
-
-
 };
 
 const getSingleStudentFromDB = async (id: string) => {
