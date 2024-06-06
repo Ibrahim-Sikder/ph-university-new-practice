@@ -13,7 +13,7 @@ router.post('/create-course', validateRequest(CourseValidations.createCourseVali
 router.get('/', CourseControllers.getAllCourses)
 router.get('/:id', CourseControllers.getSingleCourse)
 router.delete('/:id', CourseControllers.deleteCourse)
-router.patch('/:id', CourseControllers.updateCourse)
+router.patch('/:id',validateRequest(CourseValidations.updateCourseValidationSchema), CourseControllers.updateCourse)
 
 
 
