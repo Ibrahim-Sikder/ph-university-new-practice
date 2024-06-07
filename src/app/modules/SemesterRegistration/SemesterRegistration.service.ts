@@ -4,6 +4,7 @@ import { AcademicSemester } from '../academicSemester/academicSemester.model';
 import { TSemesterRegistration } from './SemesterRegistration.interface';
 import { SemesterRegistration } from './SemesterRegistration.model';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { RegistrationStatus } from './semesterRegistration.constant';
 
 const createSemesterRegistrationIntoDB = async (
   payload: TSemesterRegistration,
@@ -66,6 +67,8 @@ const updateSemesterRegistrationIntoDB = async (
 
 
   const isSemesterRegisterationExists = await SemesterRegistration.findById(id)
+  const currentSemesterStatus = isSemesterRegisterationExists?.status;
+  const requestStatus = payload?.status
 
   if(!isSemesterRegisterationExists){
     throw new AppError(httpStatus.BAD_REQUEST, 'This semester is is not found ')
@@ -73,10 +76,29 @@ const updateSemesterRegistrationIntoDB = async (
 
   const requestedSemester = await SemesterRegistration.findById(id)
 
-  if(requestedSemester?.status === 'ENDED'){
+  if(requestedSemester?.status === RegistrationStatus.ENDED){
     throw new AppError(httpStatus.BAD_REQUEST, `This semester is already ${requestedSemester?.status}`)
 
   }
+
+  // upcoming --> ongoing --> ended
+if(currentSemesterStatus === RegistrationStatus.UPCOMING && requestStatus === RegistrationStatus.ENDED ){
+  throw new AppError(httpStatus.BAD_REQUEST, `you can not directly change status from ${currentSemesterStatus} to ${requestStatus}` )
+}
+if(currentSemesterStatus === RegistrationStatus.ONGOING && requestStatus === RegistrationStatus.UPCOMING ){
+  throw new AppError(httpStatus.BAD_REQUEST, `you can not directly change status from ${currentSemesterStatus} to ${requestStatus}` )
+}
+
+
+const result = await SemesterRegistration.findByIdAndUpdate(id,
+  payload,{
+    new: true,
+    runValidators: true
+  }
+)
+
+return result 
+
 
 
 };
