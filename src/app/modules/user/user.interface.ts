@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+import { Model } from "mongoose";
+
 export interface TUser {
   id: string;
   email: string;
@@ -17,3 +20,8 @@ export interface TUser {
     id:string
   }
   
+  export interface UserModel extends Model<TUser> {
+    isUserExistsByCustomId(id:string): Promise<TUser>
+    isPasswordMatched(plainTextPassword:string,hashedPassword:string): Promise<boolean>
+  }
+

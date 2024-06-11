@@ -157,7 +157,7 @@ const updateOfferedCourseIntoDB = async (
 export const OfferedCourseServices = {
   createOfferedCourseIntoDB,
   getAllOfferedCoursesFromDB,
-  getMyOfferedCoursesFromDB,
+  // getMyOfferedCoursesFromDB,
   getSingleOfferedCourseFromDB,
   updateOfferedCourseIntoDB,
   deleteOfferedCourseFromDB
