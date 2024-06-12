@@ -8,27 +8,23 @@ import httpStatus from 'http-status';
 import { catchAsync } from '../../utils/catchAsynce';
 
 const getAllStudent: RequestHandler = catchAsync(async (req, res, next) => {
-console.log(req.query)
-    const result = await StudentServices.getAllStudentFromDB(req.query);
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Student is retrieved successfully!',
-      data: result,
-    });
- 
+  const result = await StudentServices.getAllStudentFromDB(req.query);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Student is retrieved successfully!',
+    data: result,
+  });
 });
 const getSingleStudent: RequestHandler = catchAsync(async (req, res, next) => {
-
-    const { studentId } = req.params;
-    const result = await StudentServices.getSingleStudentFromDB(studentId);
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Single student is retrieved successfully!',
-      data: result,
-    });
-
+  const { studentId } = req.params;
+  const result = await StudentServices.getSingleStudentFromDB(studentId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Single student is retrieved successfully!',
+    data: result,
+  });
 });
 const deleteStudent: RequestHandler = catchAsync(async (req, res, next) => {
   try {
@@ -46,9 +42,8 @@ const deleteStudent: RequestHandler = catchAsync(async (req, res, next) => {
 });
 
 const updateStudent: RequestHandler = catchAsync(async (req, res, next) => {
-
   const { studentId } = req.params;
-  const {student} = req.body
+  const { student } = req.body;
   const result = await StudentServices.updateStudentIntoDB(studentId, student);
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -56,12 +51,11 @@ const updateStudent: RequestHandler = catchAsync(async (req, res, next) => {
     message: ' student update successfully!',
     data: result,
   });
-
 });
 
 export const StudentController = {
   getAllStudent,
   getSingleStudent,
   deleteStudent,
-  updateStudent
+  updateStudent,
 };

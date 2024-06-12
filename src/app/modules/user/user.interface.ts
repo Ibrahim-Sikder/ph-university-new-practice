@@ -11,6 +11,7 @@ export interface TUser {
   role: 'superAdmin' | 'admin' | 'student' | 'faculty';
   status: 'in-progress' | 'blocked';
   isDeleted: boolean;
+  passwordChangedAt?:Date
 }
 
 
