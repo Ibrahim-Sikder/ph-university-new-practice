@@ -7,11 +7,11 @@ import config from '../../config';
 const loginUser = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUser(req.body);
 
-  const { refreshToken,accessToken, needsPasswordChange} = result
-  res.cookie('refreshToken', refreshToken,{
+  const { refreshToken, accessToken, needsPasswordChange } = result;
+  res.cookie('refreshToken', refreshToken, {
     secure: config.NODE_ENV === 'production',
-    httpOnly:true,
-  })
+    httpOnly: true,
+  });
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -19,15 +19,15 @@ const loginUser = catchAsync(async (req, res) => {
     message: 'User is logged in succesfully!',
     data: {
       accessToken,
-      needsPasswordChange
+      needsPasswordChange,
     },
   });
 });
 
 const changePassword = catchAsync(async (req, res) => {
-  const user = req.user 
-  const {...passwordData} = req.body
-  const result = await AuthServices.changePassword(user,passwordData);
+  const user = req.user;
+  const { ...passwordData } = req.body;
+  const result = await AuthServices.changePassword(user, passwordData);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -37,11 +37,8 @@ const changePassword = catchAsync(async (req, res) => {
   });
 });
 const refreshToken = catchAsync(async (req, res) => {
-  
-
-  const {refreshToken} = req.cookies
+  const { refreshToken } = req.cookies;
   const result = await AuthServices.refreshToken(refreshToken);
-
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -50,8 +47,21 @@ const refreshToken = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+const forgetPassword = catchAsync(async (req, res) => {
+  const userId = req.body.id;
+  const result = await AuthServices.forgetPassword(userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Rest link is generate successfully!',
+    data: result,
+  });
+});
 export const AuthController = {
   loginUser,
   changePassword,
-  refreshToken
+  refreshToken,
+  forgetPassword,
 };

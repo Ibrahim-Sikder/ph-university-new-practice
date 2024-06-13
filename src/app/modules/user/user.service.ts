@@ -76,6 +76,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   //if password is not given , use deafult password
   userData.password = password || (config.default_pass as string);
 
+  userData.email = payload.email
   //set student role
   userData.role = 'student';
 
@@ -127,7 +128,7 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
 
   //if password is not given , use deafult password
   userData.password = password || (config.default_pass as string);
-
+  userData.email = payload.email
   //set student role
   userData.role = 'faculty';
 
@@ -183,7 +184,7 @@ const createAdminIntoDB = async (password: string, payload: TFaculty) => {
 
   //if password is not given , use deafult password
   userData.password = password || (config.default_pass as string);
-
+  userData.email = payload.email
   //set student role
   userData.role = 'admin';
 
