@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RequestHandler } from 'express';
 import { UserServices } from './user.service';
@@ -8,10 +10,10 @@ import { AppError } from '../../error/AppError';
 
 const createStudent: RequestHandler = catchAsync(async (req, res, next) => {
   try {
-    const { password, student: studentData } = req.body;
-    //   const zodParsedData = studentValidationSchema.parse(studentData);
 
+    const { password, student: studentData } = req.body;
     const result = await UserServices.createStudentIntoDB(
+      req.file,
       password,
       studentData,
     );
@@ -70,7 +72,6 @@ const getMe = catchAsync(async (req, res) => {
     data: result,
   });
 });
-
 
 const changeStatus = catchAsync(async (req, res) => {
   const id = req.params.id;
