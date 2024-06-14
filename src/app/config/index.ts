@@ -18,6 +18,7 @@ export default {
     cloudinary_name: process.env.CLOUDINARY_NAME,
     cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
     cloudinary_secret: process.env.CLOUDINARY_SECRET,
+    reset_pass_ui_link: process.env.RESET_PASS_UI_LINK
 
 
 }

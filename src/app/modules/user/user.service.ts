@@ -6,19 +6,23 @@ import { TStudent } from '../student/student.interface';
 import { Student } from '../student/student.model';
 import { TUser } from './user.interface';
 import { User } from './user.model';
-import { generateAdminId, generateFacultyId, generateStudentId } from './user.utils';
+import {
+  generateAdminId,
+  generateFacultyId,
+  generateStudentId,
+} from './user.utils';
 import { AppError } from '../../error/AppError';
 import httpStatus from 'http-status';
 import { Admin } from '../Admin/admin.model';
 import { AcademicDepartment } from '../academicDepartment/academicDepartment.model';
 import { Faculty } from '../Faculty/faculty.model';
 import { TFaculty } from '../Faculty/faculty.interface';
+import { verifyToken } from '../Auth/auth.util';
 
 // const createStudentIntoDB = async (password: string, payload: TStudent) => {
 //   const userData: Partial<TUser> = {};
 //   userData.password = password || (config.default_pass as string);
 //   userData.role = 'student';
-
 
 //   const admissionSemester = await AcademicSemester.findById(
 //     payload.admissionSemester,
@@ -30,28 +34,22 @@ import { TFaculty } from '../Faculty/faculty.interface';
 
 //     session.startTransaction()
 
-  
 //     userData.id = await generateStudentId(admissionSemester);
-  
+
 //     const newUser = await User.create([userData], {session});
 
-  
 //     if (!newUser.length) {
 //       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user ')
 //     }
 
-
 //       payload.id = newUser[0].id;
 //       payload.user = newUser[0]._id;
-    
-  
+
 //     const newStudent = await Student.create([payload],{session});
 
 //     if(!newStudent.length){
 //       throw new AppError( httpStatus.BAD_REQUEST ,'Failed to create new student')
 //     }
-
-
 
 //     await session.commitTransaction()
 //     await session.endSession()
@@ -68,7 +66,6 @@ import { TFaculty } from '../Faculty/faculty.interface';
 //   createStudentIntoDB,
 // };
 
-
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // create a user object
   const userData: Partial<TUser> = {};
@@ -76,7 +73,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   //if password is not given , use deafult password
   userData.password = password || (config.default_pass as string);
 
-  userData.email = payload.email
+  userData.email = payload.email;
   //set student role
   userData.role = 'student';
 
@@ -128,7 +125,7 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
 
   //if password is not given , use deafult password
   userData.password = password || (config.default_pass as string);
-  userData.email = payload.email
+  userData.email = payload.email;
   //set student role
   userData.role = 'faculty';
 
@@ -184,7 +181,7 @@ const createAdminIntoDB = async (password: string, payload: TFaculty) => {
 
   //if password is not given , use deafult password
   userData.password = password || (config.default_pass as string);
-  userData.email = payload.email
+  userData.email = payload.email;
   //set student role
   userData.role = 'admin';
 
@@ -196,7 +193,7 @@ const createAdminIntoDB = async (password: string, payload: TFaculty) => {
     userData.id = await generateAdminId();
 
     // create a user (transaction-1)
-    const newUser = await User.create([userData], { session }); 
+    const newUser = await User.create([userData], { session });
 
     //create a admin
     if (!newUser.length) {
@@ -208,7 +205,6 @@ const createAdminIntoDB = async (password: string, payload: TFaculty) => {
 
     // create a admin (transaction-2)
     const newAdmin = await Admin.create([payload], { session });
-    
 
     if (!newAdmin.length) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create admin');
@@ -225,10 +221,48 @@ const createAdminIntoDB = async (password: string, payload: TFaculty) => {
   }
 };
 
+// const getMe = async (token: string) => {
+//   const decoded = verifyToken(token, config.jwt_access_secret as string);
+//   const { role, userId } = decoded;
+//   let result = null;
+//   if (role === 'student') {
+//     result = await Student.findOne({ id: userId });
+//   }
+//   if (role === 'admin') {
+//     result = await Admin.findOne({ id: userId });
+//   }
+//   if (role === 'faculty') {
+//     result = await Faculty.findOne({ id: userId });
+//   }
+//   return result;
+// };
+const getMe = async (userId: string, role: string) => {
+  let result = null;
+  if (role === 'student') {
+    result = await Student.findOne({ id: userId }).populate('user');
+  }
+  if (role === 'admin') {
+    result = await Admin.findOne({ id: userId }).populate('user');
+  }
+  if (role === 'faculty') {
+    result = await Faculty.findOne({ id: userId }).populate('user');
+  }
+  return result;
+};
 
+
+const changeStatus = async (id: string, payload: { status: string }) => {
+  const result = await User.findByIdAndUpdate(id, payload, {
+    new: true,
+  });
+
+  return result;
+};
 
 export const UserServices = {
   createStudentIntoDB,
   createAdminIntoDB,
-  createFacultyIntoDB
+  createFacultyIntoDB,
+  getMe,
+  changeStatus,
 };
