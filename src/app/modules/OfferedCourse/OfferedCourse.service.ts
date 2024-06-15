@@ -28,7 +28,7 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
   }
   const isacademicFacultyExist = await AcademicFaculty.findById(academicFaculty)
   if(!isacademicFacultyExist){
-     throw new AppError(httpStatus.NOT_FOUND, 'academic factulty not found ')
+     throw new AppError(httpStatus.NOT_FOUND, 'academic Faculty not found ')
   }
 
   const isacademicSemesterExist = await AcademicSemester.findById(academicSemester)

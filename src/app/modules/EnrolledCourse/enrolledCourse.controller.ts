@@ -42,6 +42,7 @@ const updateEnrolledCourseMarks = catchAsync(async (req, res) => {
     req.body,
   );
 
+  
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
